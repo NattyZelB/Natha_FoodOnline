@@ -1,4 +1,8 @@
+<!DOCTYPE html>
+<html lang="en">
+
 {% load static %}
+
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,7 +14,7 @@
 	<!-- Google Font Family Link End -->
 
 	<!-- CSS -->
-	<link href="{%static 'css/iconmoon.css' %}" rel="stylesheet">
+	<link href="{% static 'css/iconmoon.css' %}" rel="stylesheet">
 	<link href="{% static 'css/style.css' %}" rel="stylesheet">
 	<link href="{% static 'css/cs-foodbakery-plugin.css' %}" rel="stylesheet">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -29,5 +33,11 @@
 </head>
 
 <!-- Modal Popup End -->
-	<script src="{% static 'js/scripts.js' %}"></script>
-	<script src="{% static 'js/functions.js' %}"></script>
+<!--Load Navbar hier-->
+{% include 'includes/navbar.html' %}
+{% block content %}
+  <!-- CONTENT GOES HERE -->
+{% endblock %}
+
+<!--Load Footer hier-->
+{% include 'includes/footer.html'%}
