@@ -1,0 +1,9 @@
+{% autoescape off %}
+Hallo {{user.first_name}} {{user.last_name}},
+
+Klik hieronder om uw inschrijving te bevestigen.
+http://{{domain}}{% url 'activate' uidb64=uid token=token %}
+
+Als u denkt dat u het niet bent, kunt u deze e-mail negeren.
+
+{% endautoescape %}
