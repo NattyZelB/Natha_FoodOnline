@@ -1,4 +1,9 @@
-from django.contrib import admin
-from vendor.models import Vendor
+from django.urls import path, include
+from . import views
+from accounts import views as AccountViews
 
-admin.site.register(Vendor)
+urlpatterns = [
+    path('', AccountViews.vendorDashboard, name='vendor'),
+    path('profile/', views.vProfile, name='vProfile'),
+
+]

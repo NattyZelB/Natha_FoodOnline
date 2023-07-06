@@ -1,0 +1,12 @@
+{% autoescape off %}
+
+Hallo {{user.first_name}} {{user.last_name}},
+{% if is_approved %}
+Gefeliciteerd! Je restaurant is goedgekeurd door ons admin-team. --foodOnline
+{% else %}
+Het spijt ons! U komt niet in aanmerking voor het publiceren van uw voedselmenu op onze marktplaats. Neem voor meer informatie contact op met support@foodonline.com. --foodOnline
+{% endif %}
+
+
+
+{% endautoescape %}
