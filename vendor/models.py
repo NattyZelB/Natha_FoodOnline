@@ -17,19 +17,22 @@ class Vendor(models.Model):
     def save(self, *args, **kwargs):
         # check is_approved
         if self.pk is not None:
+            # Update
             orig = Vendor.objects.get(pk=self.pk)
             if orig.is_approved != self.is_approved:
                 mail_template = 'accounts/emails/admin_approved_email.html'
                 context = {
                     'user': self.user,
                     'is_approved': self.is_approved,
+                    'to_email': self.user.email,
                 }
-            if self.is_approved == True:
-                # Send notification email
-                mail_subject = 'Gefeliciteerd! Uw restaurant is goedgekeurd.'
-                send_notification(mail_subject, mail_template, context)
-            else:
-                # Send notification email
-                mail_subject = 'Het spijt ons! U komt niet in aanmerking voor het publiceren van uw voedselmenu op onze marketplace.'
-                send_notification(mail_subject, mail_template, context)
+                if self.is_approved == True:
+                    # Send notification email
+                    mail_subject = 'Gefeliciteerd! Uw restaurant is goedgekeurd.'
+                    send_notification(mail_subject, mail_template, context)
+
+                else:
+                    # Send notification email
+                    mail_subject = 'Het spijt ons! U komt niet in aanmerking voor het publiceren van uw voedselmenu op onze marketplace.'
+                    send_notification(mail_subject, mail_template, context)
         return super(Vendor, self).save(*args, **kwargs)

@@ -41,6 +41,8 @@ INSTALLED_APPS = [
 
     'accounts',
     'vendor',
+    'menu',
+    'euroformat',
 ]
 
 MIDDLEWARE = [
