@@ -115,7 +115,7 @@ def edit_category(request, pk=None):
 
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)
-def delete_category(request,pk=None):
+def delete_category(request, pk=None):
     category = get_object_or_404(Category, pk=pk)
     category.delete()
     messages.success(request, 'Categorie is succesvol verwijderd!')
@@ -140,7 +140,7 @@ def add_food(request):
     else:
         form = FoodItemForm()
         # modify this form
-
+        form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
     context = {
         'form': form,
     }
@@ -166,6 +166,8 @@ def edit_food(request, pk=None):
             print(form.errors)
     else:
         form = FoodItemForm(instance=food)
+        # modify this form
+        form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
     context = {
         'form': form,
         'food': food,
