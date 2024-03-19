@@ -30,13 +30,19 @@
 											<li>
 												<div class="img-holder">
 													<figure>
-														{% if vendor.user_profile.profile_picture %}
-														<a href="#"><img src="{{ vendor.user_profile.profile_picture.url }}" class="img-list wp-post-image" alt=""></a>
-														{% else %]
-														<a href="#"><img src="{% static 'images/default-profile.png' %}" class="img-list wp-post-image" alt=""></a>
-														{% endif %}
+														<a href="#">
+															{% if vendor.user_profile.profile_picture %}
+                                                   			 <img src="{{ vendor.user_profile.profile_picture.url }}" class="img-list wp-post-image" alt="">
+                                                    		{% else %}
+                                                    		<img src="{% static 'images/default-profile.png' %}" class="img-list wp-post-image" alt="">
+                                                    		{% endif %}
+														</a>
 													</figure>
-													<span class="restaurant-status close"><em class="bookmarkRibbon"></em>Close</span>
+													{% if vendor.is_open %}
+													<span class="restaurant-status open"><em class="bookmarkRibbon"></em>Open</span>
+													{% else %}
+													<span class="restaurant-status close"><em class="bookmarkRibbon"></em>Gesloten</span>
+													{% endif %}
 												</div>
 												<div class="text-holder">
 													  <div class="post-title">
@@ -46,10 +52,15 @@
 														  <div class="text">
 											<i class="icon-location"></i>
 											{% if vendor.user_profile.bus_number %}
-											<p>{{vendor.user_profile.address}} {{vendor.user_profile.huis_number}}/{{vendor.user_profile.bus_number}}, {{vendor.user_profile.plaatsnaam}}</p>
+											<p>{{vendor.user_profile.address}} {{vendor.user_profile.huis_number}}/{{vendor.user_profile.bus_number}}, {{vendor.user_profile.city}}</p>
 											{% else %}
-											<p>{{vendor.user_profile.address}} {{vendor.user_profile.huis_number}}, {{vendor.user_profile.plaatsnaam}}</p>
+											<p>{{vendor.user_profile.address}} {{vendor.user_profile.huis_number}}, {{vendor.user_profile.city}}</p>
 											{% endif %}
+
+															  {% if source_location %}
+
+															  <span><small><b>{{vendor.kms}} km</b> ver van {{source_location}}</small></span>
+															  {% endif %}
 										</div>
                                             </div>
 												</div>

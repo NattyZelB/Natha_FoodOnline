@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load euroformat %}
+{% block content %}
+
+<!-- Main Section Start -->
+			<div class="main-section">
+                <div class="page-section">
+					<div class="container">
+						<div class="row">
+
+							<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+								<div class="tabs-holder horizontal">
+									<ul class="stickynav-tabs nav nav-tabs">
+										<li class="active"><a data-toggle="tab" href="#home"><i class="fa fa-shopping-cart text-danger"></i>Facturatie adres</a></li>
+
+									</ul>
+									<div class="tab-content">
+										<div id="home" class="tab-pane in active">
+											<div class="menu-itam-holder">
+
+												<!-- make photo's smaller-->
+												<div id="menu-item-list-6272" class="menu-itam-list">
+													<form action="{% url 'place_order' %}" method="POST">
+														{% csrf_token %}
+														<div class="row">
+															<div class="form-group col-md-6 col-sm-12 col-lg-6">
+																Voornaam: {{form.first_name}}
+															</div>
+															<div class="form-group col-md-6 col-sm-12 col-lg-6">
+																Achternaam: {{form.last_name}}
+															</div>
+														</div>
+														<div class="row">
+															<div class="form-group col-md-6 col-sm-12 col-lg-6">
+																Telefoon nummer: {{form.phone}}
+															</div>
+															<div class="form-group col-md-6 col-sm-12 col-lg-6">
+																GSM: {{form.GSM}}
+															</div>
+														</div>
+														<div class="row">
+															<div class="form-group col-md-6 col-sm-12 col-lg-12">
+																Email-Adres: {{form.email}}
+															</div>
+														</div>
+														<div class="row">
+															<div class="form-group col-md-6 col-sm-12 col-lg-12">
+																Straat: {{form.address}}
+															</div>
+														</div>
+														<div class="row">
+															<div class="form-group col-md-6 col-sm-12 col-lg-6">
+																Huis nummer: {{form.huis_number}}
+															</div>
+															<div class="form-group col-md-6 col-sm-12 col-lg-6">
+																Bus: {{form.bus_number}}
+															</div>
+														</div>
+														<div class="row">
+															<div class="form-group col-md-6 col-sm-12 col-lg-6">
+																Stad: {{form.city}}
+															</div>
+															<div class="form-group col-md-6 col-sm-12 col-lg-6">
+																Land: {{form.Country}}
+															</div>
+														</div>
+														<div class="row">
+															<div class="form-group col-md-6 col-sm-12 col-lg-6">
+																Postcode: {{form.pin_code}}
+															</div>
+														</div>
+												</div>
+
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+                            <!--Your order section -->
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+								<div class="tabs-holder horizontal">
+									<ul class="stickynav-tabs nav nav-tabs">
+										<li class="active"><a data-toggle="tab" href="#home"><i class="icon- icon-room_service"></i>Jouw bestelling</a></li>
+
+									</ul>
+									<div class="tab-content">
+										<div id="home" class="tab-pane in active">
+											<div class="menu-itam-holder">
+												<div id="menu-item-list-6272" class="menu-itam-list">
+													<ul>
+
+															{% for item in cart_items %}
+																<li id="cart-item-{{item.id}}">
+																	<div class="image-holder"> <img src="{{ item.fooditem.image.url }}" class="img-list wp-post-image" alt=""></div>
+																		<div class="text-holder">
+																			<h6>{{ item.fooditem }}</h6>
+<!--																			<span>{{ item.fooditem.description }}</span>-->
+																			<a href="{% url 'vendor_detail' item.fooditem.vendor.vendor_slug %}" class="badge badge-warning">{{ item.fooditem.vendor }}</a>
+																		</div>
+																		<div class="quantity" style="display: inline-block; position: absolute; top: 50%; transform: translateY(-50%); margin-top: -10px;">
+                                                        				<span>{{ item.quantity }} HV</span>
+                                                    					</div>
+																		<div class="price-holder">
+
+																			<span class="price">€ {{item.fooditem.price | euroformat }}</span>
+																</li>
+															{% endfor %}
+
+													</ul>
+
+												</div>
+												{% for item in cart_items %}
+												<span id="qty-{{item.fooditem.id}}" class="item_qty d-none" data-qty="{{item.quantity}}">{{ item.quantity }}</span>
+												{% endfor %}
+												<div>
+													<ul>
+														<li style="list-style-type: none;">
+                                                            Subtotaal
+                                                            <span class="price float-right">
+                                                                <span class="currency">€</span>
+                                                                <span id="subtotal">{{subtotal | euroformat }}</span>
+                                                            </span>
+                                                        </li>
+                                                        <li style="list-style-type: none;">
+                                                            BTW 21%
+                                                             <span class="price float-right">
+                                                                <span class="currency">€</span>
+                                                                <span id="tax">{{tax | euroformat }}</span>
+                                                            </span>
+                                                        </li>
+                                                        <li style="list-style-type: none; font-weight: 600;">
+                                                            Totaal
+                                                             <span class="price float-right">
+                                                                <span class="currency">€</span>
+                                                                <span id="total">{{grand_total | euroformat }}</span>
+                                                            </span>
+                                                        </li>
+														<!--Select payment method -->
+														<h5>SELECTEER BETAALMETHODE</h5>
+														<div class="payment-method">
+															<label>
+																<input type="radio" name="payment_method" value="PayPal">
+																<img src="{% static 'images/PayPal.png' %}" alt="PayPal" width="100">
+															</label>
+															&emsp;
+															<label>
+																<input type="radio" name="payment_method" value="Bancontact">
+																<img src="{% static 'images/bancontact.png' %}" alt="Bancontact" width="100">
+															</label>
+															&emsp;
+															<label>
+																<input type="radio" name="payment_method" value="VisaMastercard">
+																<img src="{% static 'images/visamastercard.png' %}" alt="VisaMastercard" width="100">
+															</label>
+																&emsp;
+															<label>
+																<input type="radio" name="payment_method" value="Klarna">
+																<img src="{% static 'images/klarna.png' %}" alt="Klarna" width="100">
+															</label>
+															<div id="paypal-button-container"></div>
+														</div>
+														<span class="text-danger" id="payment-method-error"></span>
+														<button onclick="return payMethodConfirm();" type="submit" class="btn btn-danger w-100 p-2 mt-3">PLAATS BESTELLING</button>
+													</ul>
+													<!--end the form-->
+													</form>
+                                                </div>
+                                            </div>
+										</div>
+
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Main Section End -->
+<script>
+	function payMethodConfirm(){
+		var payMethod = $("input[name='payment_method']:checked").val()
+			if(!payMethod){
+			$('#payment-method-error').html("Selecteer betaalmethode!");
+			return false;
+		}else{
+			var conf = confirm('Je hebt geselecteerd ' +payMethod+ ' als uw gewenste betaalmethode.\nClick "OK" doorgaan.')
+			if(conf == true){
+				return true;
+			}else{
+				return false;
+			}
+		}
+	}
+</script>
+
+
+{% endblock %}

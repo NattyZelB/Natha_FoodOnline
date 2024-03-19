@@ -26,10 +26,15 @@ class UserProfileForm(forms.ModelForm):
     #longitude = forms.CharField(widget=forms.TextInput(atts={"readonly": 'readonly'}))
     class Meta:
         model = UserProfile
-        fields = ['profile_picture', 'cover_photo', 'address', 'huis_number', 'bus_number', 'plaatsnaam', 'land', 'post_code', 'pin_code', 'latitude', 'longitude']
+        fields = ['profile_picture', 'cover_photo', 'address', 'huis_number', 'bus_number', 'city', 'country', 'pin_code', 'latitude', 'longitude']
 
     def __int__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             if field == 'latitude' or field == 'longitude':
                 self.fields[field].widget.attrs['readonly'] = 'readonly'
+
+class UserInfoform(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'phone_number', 'GSM']

@@ -1,0 +1,356 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load euroformat %}
+{% block content %}
+
+<!-- Main Section Start -->
+			<div class="main-section">
+                <div class="page-section">
+					<div class="container">
+						<div class="row">
+
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+								<div class="tabs-holder horizontal">
+									<ul class="stickynav-tabs nav nav-tabs">
+										<li class="active"><a data-toggle="tab" href="#home"><i class="fa fa-shopping-cart text-danger"></i>Controleer uw factuuradres</a></li>
+
+									</ul>
+									<div class="tab-content">
+										<div id="home" class="tab-pane in active">
+											<div class="menu-itam-holder">
+
+												<div id="menu-item-list-6272" class="menu-itam-list">
+													<div class="billing-address">
+                                                        <div><b>Naam :{{order.first_name}} {{order.last_name}}</b></div>
+														<div>{{order.address}} {{order.huis_number}}</div>
+														<div>Bus: {{order.bus_number}}</div>
+                                                        <div> {{order.city}}</div>
+                                                        <div>{{order.country}}</div>
+                                                        <div>{{order.pin_code}}</div>
+                                                        <div>Email: {{order.email}}</div>
+														<div>Tel: {{order.phone}}</div>
+														<div>GSM: {{order.GSM}}</div>
+														<div><b>Payment: </b>{{ order.payment_method }}</div>
+														<br>
+														<div><a href="{% url 'checkout' %}" class="btn btn-outline-danger">Bewerking</a></div>
+                                                    </div>
+                                                </div>
+										</div>
+									</div>
+								</div>
+							</div>
+                        </div>
+                            <!--Your order section -->
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+								<div class="tabs-holder horizontal">
+									<ul class="stickynav-tabs nav nav-tabs">
+										<li class="active"><a data-toggle="tab" href="#home"><i class="icon- icon-room_service"></i>Jouw bestelling</a></li>
+
+									</ul>
+									<div class="tab-content">
+										<div id="home" class="tab-pane in active">
+											<div class="menu-itam-holder">
+												<table class="table">
+												<tbody>
+												{% for item in cart_items %}
+												<tr>
+													<td><img src="{{ item.fooditem.image.url}}" width="40" alt="Food Image"></td>
+													<td><b>{{item.fooditem}}</b></td>
+													<td>{{item.quantity}}</td>
+													<td>€{{item.fooditem.price}}</td>
+												</tr>
+												{% endfor %}
+												</tbody>
+											</table>
+												{% for item in cart_items %}
+												<span id="qty-{{item.fooditem.id}}" class="item_qty d-none" data-qty="{{item.quantity}}">{{ item.quantity }}</span>
+												{% endfor %}
+												<div>
+													<ul>
+														<li style="list-style-type: none;">
+                                                            Subtotaal
+                                                            <span class="price float-right">
+                                                                <span class="currency">€</span>
+                                                                <span id="subtotal">{{subtotal | euroformat }}</span>
+                                                            </span>
+                                                        </li>
+                                                        <li style="list-style-type: none;">
+                                                            BTW 21%
+                                                             <span class="price float-right">
+                                                                <span class="currency">€</span>
+                                                                <span id="tax">{{tax | euroformat }}</span>
+                                                            </span>
+                                                        </li>
+                                                        <li style="list-style-type: none; font-weight: 600;">
+                                                            Totaal
+                                                             <span class="price float-right">
+                                                                <span class="currency">€</span>
+                                                                <span id="total">{{grand_total | euroformat }}</span>
+                                                            </span>
+                                                        </li>
+
+														{% if order.payment_method == 'PayPal' %}
+														<!--PayPal checkout button -->
+														<div id="paypal-button-container"></div>
+														{% elif order.payment_method == 'Bancontact' %}
+														<div id="paypal-button-container"></div>
+														{% elif order.payment_method == 'VisaMastercard' %}
+														<div id="paypal-button-container"></div>
+														 {% elif order.payment_method == 'Klarna' %}
+														<div class="text-center"><klarna-express-button data-locale='nl-BE' data-theme='default' data-shape='default' data-label='klarna'/></div>
+														{% endif %}
+													</ul>
+													<!--end the form-->
+													</form>
+                                                </div>
+                                            </div>
+										</div>
+
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Main Section End -->
+ <script>
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+        return cookieValue;
+}
+
+		var grand_total = '{{grand_total}}'
+		var order_number = "{{ order.order_number }}"
+		var url = "{% url 'payments' %}"
+		var order_complete = "{% url 'order_complete' %}"
+		const csrftoken = getCookie('csrftoken');
+		console.log('csrftoken===>', csrftoken)
+        // Render the PayPal button into #paypal-button-container
+        paypal.Buttons({
+             style: {
+			color: 'silver',
+			shape: 'pill',
+			label: 'pay',
+			height: 40
+		},
+
+    	// Set up the transaction
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: grand_total
+                        }
+                    }]
+                });
+            },
+
+            // Finalize the transaction
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    // Successful capture! For demo purposes:
+                    console.log(details);
+                    var transaction = details.purchase_units[0].payments.captures[0];
+                    var transaction_id = transaction.id
+	                var status = details.status
+                	var payment_method = 'PayPal'
+                	sendTransaction(transaction_id, payment_method, status);
+
+					  // Replace the above to show a success message within this page, e.g.
+                		const element = document.getElementById('paypal-button-container');
+                		element.innerHTML = '';
+                		element.innerHTML = '<h4 class="text-center"><i class="fa fa-spinner fa-spin"></i> Even geduld aub...</h4>';
+                		// Or go to another URL:  actions.redirect('thank_you.html');
+              		});
+
+				}
+         }).render('#paypal-button-container');
+
+
+
+// Send the data to payments view to store in the database
+    function sendTransaction(transaction_id, payment_method, status){
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                'order_number': order_number,
+                'transaction_id': transaction_id,
+                'payment_method': payment_method,
+                'status': status,
+                'csrfmiddlewaretoken': csrftoken
+            },
+            success: function(response){
+                console.log('response==>', response)
+                window.location.href = order_complete +'?order_no='+response.order_number+'&trans_id='+response.transaction_id
+            }
+        })
+    }
+
+
+</script>
+<script>
+	// Klarna payment gateway
+	 function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+
+    var grand_total = "{{ grand_total }}"
+    var url = "{% url 'payments' %}"
+    var order_number = "{{ order.order_number }}"
+    const csrftoken = getCookie('csrftoken');
+    var order_complete = "{% url 'order_complete' %}"
+    console.log('csrftoken===>', csrftoken)
+
+
+window.klarnaExpressButtonAsyncCallback = function(){
+Klarna.ExpressButton.on('user-authenticated', function (callbackData) {
+	const resp = await fetch(
+  	`https://api.klarna.com/payments/v1/authorizations/${authorizationToken}/order`,
+ 	 {
+		method: 'POST',
+		headers: {
+		  'Content-Type': 'application/json'
+     },
+    body: JSON.stringify({
+      auto_capture: false,
+      billing_address: {
+        street_address: "{{order.address}} ",
+			street_address2: "{{order.huis_number}}",
+			postal_code: "{{order.pin_code}}",
+			city: "{{order.city}}",
+			country: "{{order.country}}"
+      },
+      customer: {
+        first_name: "{{order.first_name}}",
+		  last_name: "{{order.last_name}}",
+		  email: "{{order.email}}",
+		  phone: "{{order.GSM}}",
+      },
+      order_amount: grand_total,
+
+       const element = document.getElementById('klarna-express-button');
+               element.innerHTML = '';
+               element.innerHTML = '<h4 class="text-center"><i class="fa fa-spinner fa-spin"></i> Even geduld aub...</h4>';
+
+                var transaction_id = response.razorpay_payment_id
+                var payment_method = 'Klarna'
+                var status = 'Success'
+               sendTransaction(transaction_id, payment_method, status);
+		}
+	})
+}
+    })
+  }
+);
+
+const data = await resp.json();
+console.log(data);
+
+
+// Send the data to payments view to store in the database
+    function sendTransaction(transaction_id, payment_method, status){
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                'order_number': order_number,
+                'transaction_id': transaction_id,
+                'payment_method': payment_method,
+                'status': status,
+                'csrfmiddlewaretoken': csrftoken
+            },
+            success: function(response){
+                console.log('response==>', response)
+                window.location.href = order_complete +'?order_no='+response.order_number+'&trans_id='+response.transaction_id
+            }
+        })
+    }
+
+
+</script>
+
+<script>
+//worldline payment gateway
+ function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+        return cookieValue;
+}
+
+		var grand_total = '{{grand_total}}'
+		var order_number = "{{ order.order_number }}"
+		var url = "{% url 'payments' %}"
+		var order_complete = "{% url 'order_complete' %}"
+		const csrftoken = getCookie('csrftoken');
+		console.log('csrftoken===>', csrftoken)
+	// Create a URI for our TEST/LIVE environment
+final URI apiEndpoint = URI.create("https://payment.preprod.direct.worldline-solutions.com");
+
+// Initialise the client with the apikey, apisecret and URI
+final Authenticator authenticator = new DefaultAuthenticator("YourAPIkey", "YourAPISecret");
+final MetaDataProvider metadataProvider = new MetaDataProvider("OnlinePayments");
+
+final DefaultConnection defaultConnection = new DefaultConnection(5000, 10000);
+
+ClientInterface client = Factory.createClient(apiEndpoint, defaultConnection, authenticator, metadataProvider);
+
+// ...
+
+// Initiate fields for createHostedCheckoutRequest
+CreateHostedCheckoutRequest createHostedCheckoutRequest = new CreateHostedCheckoutRequest().withOrder(new Order()
+.withAmountOfMoney(new AmountOfMoney()
+.withAmount(100L)
+.withCurrencyCode("EUR")))
+.withHostedCheckoutSpecificInput(new HostedCheckoutSpecificInput()
+.withReturnUrl("https://yourReturnUrl.com"));
+
+// ...
+
+// Send the request to your PSPID on our platform and receive it via an instance of CreateHostedCheckoutResponse
+CreateHostedCheckoutResponse createHostedCheckoutResponse = client
+.merchant("YourPSPID")
+.hostedCheckout()
+.createHostedCheckout(createHostedCheckoutRequest);
+</script>
+
+
+
+{% endblock %}
+

@@ -21,6 +21,9 @@
 	<link href="{% static 'css/bootstrap-slider.css' %}" rel="stylesheet">
 	<link rel="stylesheet" href="{% static 'css/custom.css' %}">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!--	datatable css-->
+	<link rel="stylesheet" href="//cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
 
 	<!-- JAVASCRIPT -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -28,7 +31,32 @@
 	<script src="{% static 'js/bootstrap.js' %}"></script>
 	<script src="{% static 'js/custom.js' %}"></script>
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<!--	datatable js-->
+	<script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+	<script>
+		$(document).ready( function () {
+    		$('#myOrdersTable').DataTable();
+		} );
+	</script>
 
+	{% if '/' == request.path or 'profile' in request.path %}
+	<script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_API_KEY}}&libraries=places&callback=initAutoComplete"  defer></script>
+	{% endif %}
+	<!--PayPal-->
+ <script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&components=buttons&vault=true&currency=EUR"></script>
+<!--   Bancontact-->
+<script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&components=buttons,payment-fields,marks,funding-eligibility&enable-funding=bancontact&currency=EUR"></script>
+<!--   iDEAL-->
+<script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&components=buttons,payment-fields,marks,funding-eligibility&enable-funding=ideal&currency=EUR"></script>
+
+	<!-- Include the Stripe JavaScript SDK -->
+	<script src="https://js.stripe.com/v3/"></script>
+	<!--klarna-->
+	<script
+   src="https://x.klarnacdn.net/express-button/v1/lib.js"
+   data-id="{{KLARNA_MID}}"
+   data-environment="playground"
+   async></script>
 	<style>
 		body, .main-section p, .mce-content-body p{
 			font:Normal  14px/24px "Open Sans", sans-serif;letter-spacing: 0px;text-transform: none;color: #515151 !important;

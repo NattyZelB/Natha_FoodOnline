@@ -30,7 +30,7 @@
 																	<div class="image-holder"> <img src="{{ item.fooditem.image.url }}" class="img-list wp-post-image" alt=""></div>
 																		<div class="text-holder">
 																			<h6>{{ item.fooditem }}</h6>
-																			<span>{{ item.fooditem.description }}</span>
+<!--																			<span>{{ item.fooditem.description }}</span>-->
 																			<a href="{% url 'vendor_detail' item.fooditem.vendor.vendor_slug %}" class="badge badge-warning">{{ item.fooditem.vendor }}</a>
 																		</div>
 
@@ -79,23 +79,24 @@
                                                             Subtotaal
                                                             <span class="price float-right">
                                                                 <span class="currency">€</span>
-                                                                <span id="subtotal">{{subtotal}}</span>
+                                                                <span id="subtotal">{{subtotal | euroformat }}</span>
                                                             </span>
                                                         </li>
                                                         <li style="list-style-type: none;">
                                                             BTW 21%
                                                              <span class="price float-right">
                                                                 <span class="currency">€</span>
-                                                                <span id="tax">{{tax}}</span>
+                                                                <span id="tax">{{tax | euroformat }}</span>
                                                             </span>
                                                         </li>
                                                         <li style="list-style-type: none; font-weight: 600;">
                                                             Totaal
                                                              <span class="price float-right">
                                                                 <span class="currency">€</span>
-                                                                <span id="total">{{grand_total}}</span>
+                                                                <span id="total">{{grand_total | euroformat }}</span>
                                                             </span>
                                                         </li>
+														<a href="{% url 'checkout' %}" class="btn btn-danger w-100 p-2 mt-3">GA NAAR DE KASSA</a>
 													</ul>
 
                                                 </div>

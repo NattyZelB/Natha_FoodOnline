@@ -6,7 +6,7 @@ autocomplete = new google.maps.places.Autocomplete(
     {
         types: ['geocode', 'establishment'],
         //default in this app is "IN" - add your country code
-        componentRestrictions: {'country': ['in']},
+        componentRestrictions: {'country': ['be','nl']},
     })
 // function to specify what should happen when the prediction is clicked
 autocomplete.addListener('place_changed', onPlaceChanged);
@@ -175,18 +175,17 @@ $(document).ready(function(){
                 }else {
                 $('#cart_counter').html(response.cart_counter['cart_count']);
                     swal(response.status, response.message, 'success')
-
-                    applyCartAmounts(
+                     removeCartItem(0, cart_id)
+                     checkEmptyCart()
+                      applyCartAmounts(
                      response.cart_amount['subtotal'],
                      response.cart_amount['tax'],
                      response.cart_amount['grand_total'],
                     )
 
-                    removeCartItem(0, cart_id)
-                    checkEmptyCart()
 
 
-               }
+}
            }
          })
     })
@@ -220,5 +219,71 @@ function applyCartAmounts(subtotal, tax, grand_total){
         $('#total').html(grand_total)
     }
 }
+ $('.add_hour').on('click', function(e){
+     e.preventDefault();
+     var day = document.getElementById('id_day').value
+     var from_hour = document.getElementById('id_from_hour').value
+     var to_hour = document.getElementById('id_to_hour').value
+     var is_closed =  document.getElementById('id_is_closed').checked
+     var csrf_token = $('input[name=csrfmiddlewaretoken]').val()
+     var url = document.getElementById('add_hour_url').value
 
+     console.log(day, from_hour, to_hour, is_closed, csrf_token)
+
+     if(is_closed){
+        is_closed = 'True'
+        condition = " day != '' "
+     }else{
+        is_closed = 'False'
+        condition = " day !='' && from_hour != '' && to_hour !='' "
+     }
+     if(eval(condition)){
+          $.ajax({
+                type: 'POST',
+                url: url,
+                data: {
+                    'day': day,
+                    'from_hour': from_hour,
+                    'to_hour': to_hour,
+                    'is_closed': is_closed,
+                    'csrfmiddlewaretoken': csrf_token,
+                },
+                success: function(response){
+                    if(response.status == 'success'){
+                        if(response.is_closed == 'Gesloten'){
+                            html = '<tr id="hour-'+response.id+'"><td><b>'+response.day+'</b></td><td>Gesloten</td><td><a href="#" class="remove_hour" data-url="/vendor/opening-hours/remove/'+response.id+'/">Verwijderen</a></td></tr>'
+                        }else{
+                             html = '<tr id="hour-'+response.id+'"><td><b>'+response.day+'</b></td><td>'+response.from_hour+' - '+response.to_hour+'</td><td><a href="#" class="remove_hour" data-url="/vendor/opening-hours/remove/'+response.id+'/">Verwijderen</a></td></tr>'
+                        }
+
+                        $(".opening_hours").append(html)
+                        document.getElementById("opening_hours").reset();
+                    }else{
+                        swal(response.message, '', "error")
+                    }
+                }
+          })
+     }else{
+         swal('Gelieve alle velden in te vullen','', 'info');
+     }
+
+ });
+
+ //REMOVE OPENING HOUR
+
+ $(document).on('click', '.remove_hour', function(e){
+    e.preventDefault();
+    url = $(this).attr('data-url');
+    console.log(url)
+    $.ajax({
+        type: 'GET',
+        url: url,
+        success: function(response){
+            if(response.status ==  'success'){
+                document.getElementById('hour-'+response.id).remove()
+            }
+        }
+    })
+ })
+//document ready close
 });

@@ -1,0 +1,7 @@
+[OnlinePaymentsSDK]
+connect.api.integrator=nathafoodonline
+connect.api.endpoint.host=https://payment.pay1.sandbox.secured-by-ingenico.com/test-token/1093-fa8ac854-b478-4bfd-a5be-7477444aaa69
+connect.api.authorizationType=v1HMAC
+connect.api.connectTimeout=5 # use -1 for no timeout
+connect.api.socketTimeout=300 # use -1 for no timeout
+connect.api.maxConnections=10 # to support 10 concurrent connections

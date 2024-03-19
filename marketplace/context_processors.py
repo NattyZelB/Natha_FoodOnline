@@ -1,6 +1,6 @@
 import decimal
 
-from .models import Cart
+from .models import Cart, Tax
 from menu.models import FoodItem
 from decimal import Decimal
 
@@ -22,11 +22,26 @@ def get_cart_amounts(request):
     subtotal = 0
     tax = 0
     grand_total = 0
+    tax_dict = {}
     if request.user.is_authenticated:
         cart_items = Cart.objects.filter(user=request.user)
         for item in cart_items:
             fooditem = FoodItem.objects.get(pk=item.fooditem.id)
             subtotal += (fooditem.price * item.quantity)
+
+        get_tax = Tax.objects.filter(is_active=True)
+        for i in get_tax:
+            tax_type = i.tax_type
+            tax_percentage = i.tax_percentage
+            tax_amount = round(Decimal(tax_percentage * subtotal)/100, 2)
+            #print(tax_type, tax_percentage, tax_amount)
+            tax_dict.update({tax_type: {tax_percentage: tax_amount}})
+            #print(tax_dict)
+        #tax = sum(x for key in tax_dict.values() for x in key.values())
+        for key in tax_dict.values():
+            for x in key.values():
+                tax = tax + x
+       # print(tax)
         tax = round(Decimal((subtotal * 21)/100), 2)
         grand_total = round(Decimal(subtotal + tax), 2)
     return dict(subtotal=subtotal, tax=tax, grand_total=grand_total)

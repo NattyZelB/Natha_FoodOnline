@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{%load static %}
+{% load euroformat %}
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="col-md-8">
+        <div class="bg-white p-3">
+                <img src="{% static 'logo/foodOnlineLogo.png' %}" alt="foodOnline Logo" width="300">
+             <div class="row">
+                <div class="col-md-6">
+                    <h4 class="ml-2 mb-3">Bedankt voor je bestelling.</h4>
+                </div>
+                <div class="col-md-6 text-right">
+                    <p class="mb-0">{{order}}</p>
+                    <p class="mb-0">{{order.address}} {{order.huis_number}}</p>
+                    <p class="mb-0">Bus {{order.bus_number}}</p>
+                    <p class="mb-0">{{order.city}}</p>
+                    <p class="mb-0">{{order.country}}</p>
+                    <p class="mb-0">{{order.pin_code}}</p>
+                    <p class="mb-0">{{order.email}}</p>
+                     <p class="mb-0">{{order.phone}}</p>
+                    <p class="mb-0">{{order.GSM}}</p>
+                </div>
+             </div>
+
+            <h6>Hallo {{order.name}}, </h6><span>Controleer hieronder uw bestelgegevens.</span>
+            <hr>
+			<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+								<div class="tabs-holder horizontal">
+                                    <div class="tab-content">
+										<div id="home" class="tab-pane in active">
+											<div class="menu-itam-holder">
+												<div id="menu-item-list-6272" class="menu-itam-list">
+													<ul>
+
+															{% for item in cart_items %}
+																<li id="cart-item-{{item.id}}">
+																	<div class="image-holder"> <img src="{{ item.fooditem.image.url }}" class="img-list wp-post-image" alt=""></div>
+																		<div class="text-holder">
+																			<h6>{{ item.fooditem }}</h6>
+<!--																			<span>{{ item.fooditem.description }}</span>-->
+																			<a href="{% url 'vendor_detail' item.fooditem.vendor.vendor_slug %}" class="badge badge-warning">{{ item.fooditem.vendor }}</a>
+																		</div>
+																		<div class="quantity" style="display: inline-block; position: absolute; top: 50%; transform: translateY(-50%); margin-top: -10px;">
+                                                        				<span>{{ item.quantity }} HV</span>
+                                                    					</div>
+																		<div class="price-holder">
+
+																			<span class="price">€ {{item.fooditem.price | euroformat }}</span>
+																</li>
+															{% endfor %}
+
+													</ul>
+
+												</div>
+												{% for item in ordered_food %}
+												<span id="qty-{{item.fooditem.id}}" class="item_qty d-none" data-qty="{{item.quantity}}">{{ item.quantity }}</span>
+												{% endfor %}
+											</div>
+										</div>
+
+									</div>
+								</div>
+							</div>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <span class="d-block">>Besteldatum:</span><span class="font-weight-bold">{{order.created_at}}</span>
+                </div>
+                <div>
+                    <span class="d-block">Bestel nr:</span><span class="font-weight-bold">{{order.order_number}}</span>
+                </div>
+                <div>
+                    <span class="d-block">Betalingsmiddel:</span ><span class="font-weight-bold">{{order.payment_method}}</span>
+                </div>
+                <div>
+                    <span class="d-block">Transactie ID:</span><span class="font-weight-bold">{{order.payment.transaction_id}}</span>
+                </div>
+            </div>
+            <hr>
+            <table class="table">
+                <tbody>
+                {% for item in ordered_food %}
+                <tr>
+                    <td><img src="{{item.fooditem.image.url}}" width="60" alt="Food Image"></td>
+                    <td>
+                        <p class="mb-0"><b>{{item.fooditem}}</b></p>
+                        <a class="text-muted" href="{% url 'vendor_detail' item.fooditem.vendor.vendor_slug %}">{{item.fooditem.vendor.vendor_name}}</a>
+                    </td>
+                    <td>{{item.quantity}}</td>
+                    <td>€ {{item.fooditem.price | euroformat}}</td>
+                </tr>
+                {% endfor%}
+                </tbody>
+            </table>
+
+            <div class="row mt-5">
+                <div class="d-flex justify-content-center col-md-6">
+                    <img src="{% static 'images/paid.png' %}" width="200">
+                </div>
+                <div class="col-md-6">
+                    <ul>
+                        <li style="list-style-type:none;">
+                            Subtotaal
+                            <span class="price float-right">
+                                <span class="currency">€</span>
+                                <span id="subtotal">{{subtotal | euroformat}}</span>
+                            </span>
+                        </li>
+                        <li style="list-style-type: none;">
+                            BTW 21%
+                            <span class="price float-right">
+                                <span class="currency">€</span>
+                                <span id="tax">{{tax_data | euroformat }}</span>
+                            </span>
+                        </li>
+                         <li style="list-style-type: none; font-weight: 600;">
+                             Totaal
+                             <span class="price float-right">
+                                 <span class="currency">€</span>
+                                 <span id="total">{{order.total | euroformat }}</span>
+                             </span>
+                         </li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <span class="d-block font-weight-bold">Bedankt voor het bestellen bij ons.</span>
+                    <span>FoodOnline Team</span>
+                </div>
+                <div class="d-flex justify-content-end align-items-end">
+                    <span class="d-block font-weight-bold">Need help?</span>
+                    <span>Bel- +32478329286</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
